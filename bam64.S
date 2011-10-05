@@ -179,34 +179,38 @@ bam64_regular:
 	// we switched to a normal column, all is fine. if colnum == 8,
 	// we are at the end of an image, thus we have to set colnum = 0,
 	// colpattern = 0, 
-	
-	cpi bitnum, 8
-	brne bam64_cexit
-	// move to next column
-	lds colnum, bam64_colnum	// TODO: necessary?
-	inc colnum
-	cpi colnum, 8
-	brne 2f
-	rjmp bam64_endimg
-2:	
-	// next column
-	inc colnum
-	sts bam64_colnum, colnum
-	lds colpattern, bam64_colpattern
-	lsl colpattern
-	sts bam64_colpattern, colpattern
 
-	subi bitnum, BAM64NUMFAST	// don't count fast cycles
+	// starting from bitnum, subtract the number of fast cycles (and
+	// compensate for the fact that bitnum has already been
+	// incremented), then generate generate teh time out to
+	// from it.
+	push bitnum	
+	subi bitnum, BAM64NUMFAST+1
 	ldi to, 1
 	lsr to
 1:	lsl to
 	dec bitnum
 	brne 1b
 	sts bam64_to, to
-
-	sts bam64_to, to
+	pop bitnum
 	
+	// if bitnum < 8, we continue with BAM on this column, thus go to bam64_cexit
+	cpi bitnum, 8
+	brne bam64_cexit
 	
+	// move to next column
+	lds colpattern, bam64_colpattern
+	lsl colpattern
+	sts bam64_colpattern, colpattern
+	lds colnum, bam64_colnum	// TODO: necessary?
+	inc colnum
+	sts bam64_colnum, colnum
+	// if colnum == 8, we reached the end of the matrix, do clean ups at
+	// bam64_endimg
+	cpi colnum, 8
+	brne 2f
+	rjmp bam64_endimg
+2:	
 	rjmp bam64_cexit // relax?
 
 
@@ -229,9 +233,9 @@ bam64_endimg:
 	sts bam64_bitnum, bitnum
 	sts bam64_colnum, bitnum
 
-	ldi bitnum, 1
-	sts bam64_colpattern, bitnum
-	sts bam64_to, bitnum
+	ldi colpattern, 1
+	sts bam64_colpattern, colpattern
+	//sts bam64_to, bitnum 			// to is set up and correct
 	
 	rjmp bam64_cexit
 
