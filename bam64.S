@@ -157,6 +157,7 @@ bam64_fast:
 
 	ldi bitnum, BAM64NUMFAST
 	// TODO: load to
+	ldi to, 1
 	
 	rjmp bam64_cexit
 
