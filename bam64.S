@@ -164,10 +164,21 @@ bam64_regular:
 	add ZL, bitnum
 	brcc 1f
 	inc ZH
-1:	ld tmp1, Z
-	inc bitnum
-	sts bam64_bitnum, bitnum
+1:	ld tmp1, Z			// load pattern at offset bitnum
+	out PORTB-0x20, tmp1		// output to rows
+	inc bitnum			// blindly increment bitnum
+	sts bam64_bitnum, bitnum	// check for end of column later
 
+	// so far, so good
+	// TODO: clean this up, it does not make a lot of sense
+	// idea: bitnum++. on bitnum < 8, set to according to bitnum
+	// and BAM64NUMFAST. if bitnum == 8, we have to move to the next
+	// column, thus bitnum = 0, colnum++ and colpattern <<= 1.
+	// if colnum < 8,
+	// we switched to a normal column, all is fine. if colnum == 8,
+	// we are at the end of an image, thus we have to set colnum = 0,
+	// colpattern = 0, 
+	
 	cpi bitnum, 8
 	brne bam64_cexit
 	// move to next column
