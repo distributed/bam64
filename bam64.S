@@ -6,16 +6,22 @@
 bam64flags:	
 .skip BAM64NUMFLAGS
 
+.global bam64_to
 bam64_to:
 .byte 1
+.global bam64_bitnum
 bam64_bitnum:
 .byte 1
+.global bam64_colnum
 bam64_colnum:
 .byte 1
+.global bam64_colpattern
 bam64_colpattern:
 .byte 1
+.global bam64_front
 bam64_front:
 .byte 2
+.global bam64_shadow
 bam64_shadow:
 .byte 2
 
