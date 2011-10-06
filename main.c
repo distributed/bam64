@@ -113,6 +113,7 @@ uint8_t getbyte() {
 }
 
 
+bam64image imgs;
 
 int main() {
 
@@ -124,6 +125,13 @@ int main() {
 
   // 57600kbit/s @ 16MHz
   UBRR0 = 16;
+
+
+  bam64_front = &(imgs[0]);
+  bam64_shadow = &(imgs[1]);
+
+  bam64_to = 1;
+  bam64_colpattern = 1;
 
   sei();
 
