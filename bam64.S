@@ -35,7 +35,8 @@ bam64_shadow:
 #define bitnum r18
 	
 .section .text
-	
+
+.global bam64step
 bam64step:
 	push to
 	in to, SREG-0x20

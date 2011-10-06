@@ -15,4 +15,8 @@ volatile extern uint8_t bam64_colnum;
 volatile extern uint8_t bam64_colpattern;
 volatile extern uint8_t *bam64_front;
 volatile extern uint8_t *bam64_shadow;
+
+// just for debugging, actually it's an ISR
+void bam64step();
+
 #endif
