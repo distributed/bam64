@@ -163,8 +163,10 @@ bam64_fast:
 #endif
 
 	ldi bitnum, BAM64NUMFAST
+	sts bam64_bitnum, bitnum
 	// TODO: load to
 	ldi to, 1
+	sts bam64_to, to
 	
 	rjmp bam64_cexit
 
