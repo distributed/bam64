@@ -135,7 +135,7 @@ int main() {
 
   sei();
 
-  printf("running.\n");
+  printf("running bam64 testbench\n");
   bam64flags[0] = 1;
 
   while (1) {
