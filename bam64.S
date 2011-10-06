@@ -207,6 +207,9 @@ bam64_regular:
 	// if bitnum < 8, we continue with BAM on this column, thus go to bam64_cexit
 	cpi bitnum, 8
 	brne bam64_cexit
+
+	ldi bitnum, 0
+	sts bam64_bitnum, bitnum
 	
 	// move to next column
 	lds colpattern, bam64_colpattern
