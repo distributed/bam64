@@ -189,12 +189,13 @@ bam64_regular:
 	// we are at the end of an image, thus we have to set colnum = 0,
 	// colpattern = 0, 
 
+	// TODO: check this compensation thingie
 	// starting from bitnum, subtract the number of fast cycles (and
 	// compensate for the fact that bitnum has already been
 	// incremented), then generate generate teh time out to
 	// from it.
 	push bitnum	
-	subi bitnum, BAM64NUMFAST+1
+	subi bitnum, BAM64NUMFAST
 	ldi to, 1
 	lsr to
 1:	lsl to
