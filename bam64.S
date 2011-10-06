@@ -198,7 +198,7 @@ bam64_regular:
 	subi bitnum, BAM64NUMFAST
 	ldi to, 1
 	lsr to
-1:	lsl to
+1:	rol to
 	dec bitnum
 	brne 1b
 	sts bam64_to, to
