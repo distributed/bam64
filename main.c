@@ -115,6 +115,10 @@ uint8_t getbyte() {
 
 bam64image imgs;
 
+void printbam64state(int i) {
+    printf("%03d: p%01x%01x to %02x bitnum % 1d colpattern %02x\n", i, bam64_colnum, bam64_bitnum, bam64_to, bam64_bitnum, bam64_colpattern);
+}
+
 int main() {
 
   stdout = &mystdout;
@@ -138,8 +142,19 @@ int main() {
   printf("running bam64 testbench\n");
   bam64flags[0] = 1;
 
-  while (1) {
 
+
+
+  printbam64state(-1);
+  int i = 0;
+  while (1) {
+      if (i<130) {
+	  uint8_t begin = (bam64_to == 1);
+	  bam64step();
+	  if (!begin) printf("\t");
+	  printbam64state(i);
+	  i++;
+      }
   }
 
 }
