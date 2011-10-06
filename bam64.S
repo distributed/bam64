@@ -127,7 +127,7 @@ bam64_fast:
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 2
 	// the sleeps are here to quickly navigate an objdump
-	sleep
+	//sleep
 	waste (A-3)
 #endif
 #endif
@@ -137,7 +137,7 @@ bam64_fast:
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 3 
 	// waste (2a-3)
-	sleep
+	//sleep
 	waste((2*A)-3)
 #endif
 #endif
@@ -147,7 +147,7 @@ bam64_fast:
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 4 
 	// waste (4a-3)
-	sleep
+	//sleep
 	waste((4*A)-3)
 #endif
 #endif
@@ -157,7 +157,7 @@ bam64_fast:
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 5 
 	// waste (8a-3)
-	sleep
+	//sleep
 	waste((2*A)-3)	
 #endif
 #endif
