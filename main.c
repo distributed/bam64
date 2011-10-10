@@ -113,10 +113,26 @@ uint8_t getbyte() {
 }
 
 
-bam64image imgs;
+/*bam64images imgs;
+  bam64image bambuf;*/
+
+uint8_t front[64];
+uint8_t shadow[64];
+uint8_t bambuf[64];
 
 void printbam64state(int i) {
     printf("%03d: p%01x%01x to %02x bitnum % 1d colpattern %02x\n", i, bam64_colnum, bam64_bitnum, bam64_to, bam64_bitnum, bam64_colpattern);
+}
+
+
+void printbuf(volatile uint8_t *buf) {
+    printf("printbuf @  %p\n", buf);
+    for (uint8_t line = 0; line < 8; line++) {
+	for (uint8_t column = 0; column < 8; column++) {
+	    printf("%02x ", buf[(8*column)+line]);
+	}
+	printf("\n");
+    }
 }
 
 int main() {
@@ -131,8 +147,11 @@ int main() {
   UBRR0 = 16;
 
 
-  bam64_front = &(imgs[0]);
-  bam64_shadow = &(imgs[1]);
+  /*bam64_front = (uint8_t*) &(imgs[0]);
+    bam64_shadow = (uint8_t*) &(imgs[1]);*/
+  //bam64_front = &(front[0]);
+  bam64_front = front;
+  bam64_shadow = shadow;
 
   bam64_to = 1;
   bam64_colpattern = 1;
@@ -142,7 +161,31 @@ int main() {
   printf("running bam64 testbench\n");
   bam64flags[0] = 1;
 
+  for (uint8_t i = 0; i < 64; i++) {
+      bambuf[i] = i;
+  }
+  
+  printbuf(bambuf);
+  printf("-- looking up brightness values... ");
+  br2bam();
+  printf("done\n");
 
+  printbuf(bambuf);
+
+  printf("-- bending 64 values... ");
+  
+  bam64bend();
+  printf("done\n");
+  
+  printbuf(bam64_shadow);
+
+  printf("--copying to front, no questions asked...");
+  for (uint8_t i = 0; i < 64; i++) {
+      bam64_front[i] = bam64_shadow[i];
+  }
+  printf("done\n");
+  
+  printbuf(bam64_front);
 
 
   printbam64state(-1);
