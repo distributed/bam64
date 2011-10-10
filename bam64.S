@@ -101,17 +101,6 @@ bam64_fast:
 3:    	
 #define BAM64NUMFAST 4
 
-// user has to quote numbers nicely	
-//#define burn(n)	ldi tmp1, 3\
-//	5:	dec tmp1\
-//	brne 5b\
-	
-//#define burn(n) ldi tmp1, (n)
-
-
-//#define waste nop
-//#define wasten(n) ldi tmp1, n
-
 .macro waste n=25
 	ldi tmp1, (\n-1)/3
 5:	dec tmp1
