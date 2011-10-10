@@ -19,4 +19,7 @@ volatile extern uint8_t *bam64_shadow;
 // just for debugging, actually it's an ISR
 void bam64step();
 
+void br2bam();
+void bam64bend();
+
 #endif

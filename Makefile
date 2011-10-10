@@ -1,5 +1,5 @@
 COBJS=main.o
-ASMOBJS=bam64.o
+ASMOBJS=bam64.o bam64bend.o
 
 CCARCH=atmega1280
 ADARCH=m1280
