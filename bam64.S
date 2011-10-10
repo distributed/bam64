@@ -163,7 +163,7 @@ bam64_fast:
 #if BAM64NUMFAST >= 5 
 	// waste (8a-3)
 	//sleep
-	waste((2*A)-3)	
+	waste((8*A)-3)	
 #endif
 #endif
 
