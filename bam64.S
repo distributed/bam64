@@ -33,11 +33,11 @@ bam64_shadow:
 
 
 #define to r16
-#define settmp1 r16
 #define colpattern r16	// column pattern is generated before a column is drawn
 #define tmp1 r16
 #define colnum r17
 #define bitnum r18
+#define settmp1 r18
 	
 .section .text
 
