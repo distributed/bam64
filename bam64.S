@@ -76,7 +76,10 @@ cprolog:
 	brne bam64_regular
 	
 	
-bam64_fast:	
+bam64_fast:
+	// turn off all lines
+	out PORTB-0x20, bitnum // this works since in bam64_fast we obviously
+			       // have bitnum == 0.
 	//turn columns off
         in settmp1, DDRC-0x20
         andi settmp1, ~((1<<PC0)|(1<<PC1)|(1<<PC2)|(1<<PC3))
