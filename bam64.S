@@ -33,9 +33,11 @@ bam64_shadow:
 
 
 #define to r16
+//#define settmp1 r16
 #define colpattern r16	// column pattern is generated before a column is drawn
 #define tmp1 r16
 #define colnum r17
+#define tmp2 r17
 #define bitnum r18
 #define settmp1 r18
 	
@@ -246,6 +248,29 @@ bam64_endimg:
 	ldi colpattern, 1
 	sts bam64_colpattern, colpattern
 	//sts bam64_to, bitnum 			// to is set up and correct
+	
+	// do front/shadow buffers need to be switched?
+	lds tmp1, bam64flags+BAM64FLAG_COPY
+	and tmp1, tmp1
+	breq bam64_cexit
+
+	// switch front/shadow
+	// we directly store tmp1 (which is bam64flags[BAM64FLAG_COPY] == 1) to
+	// the copied flag
+	sts bam64flags+BAM64FLAG_COPIED, tmp1
+	//clear the copy flag
+	clr tmp1
+	sts bam64flags+BAM64FLAG_COPY, tmp1
+
+	// switch the pointers
+	lds tmp1, bam64_front
+	lds tmp2, bam64_shadow
+	sts bam64_shadow, tmp1
+	sts bam64_front, tmp2	
+	lds tmp1, bam64_front+1
+	lds tmp2, bam64_shadow+1
+	sts bam64_shadow+1, tmp1
+	sts bam64_front+1, tmp2
 	
 	rjmp bam64_cexit
 
