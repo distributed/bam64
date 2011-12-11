@@ -45,6 +45,7 @@ bam64_shadow:
 
 .global bam64step
 bam64step:
+	sbi PORTC-0x20, PC4 // interrupt active line high
 	push to
 	in to, SREG-0x20
 	push to
@@ -238,9 +239,11 @@ bam64_minexit:
 	pop to
 	out SREG-0x20, to
 	pop to
+	cbi PORTC-0x20, PC4 // interrupt active line low
 	reti
 
 bam64_endimg:
+	sbi PORTC-0x20, PC5 // end of frame trigger high
 	ldi bitnum, 0
 	sts bam64_bitnum, bitnum
 	sts bam64_colnum, bitnum
@@ -248,6 +251,8 @@ bam64_endimg:
 	ldi colpattern, 1
 	sts bam64_colpattern, colpattern
 	//sts bam64_to, bitnum 			// to is set up and correct
+
+	cbi PORTC-0x20, PC5 // end of frame trigger line low
 	
 	// do front/shadow buffers need to be switched?
 	lds tmp1, bam64flags+BAM64FLAG_COPY
