@@ -253,12 +253,17 @@ bam64_endimg:
 	//sts bam64_to, bitnum 			// to is set up and correct
 
 	cbi PORTC-0x20, PC5 // end of frame trigger line low
+
+	// increment frame counter
+	lds tmp2, bam64flags+BAM64FLAG_FRMCNT
+	inc tmp2
+	sts bam64flags+BAM64FLAG_FRMCNT, tmp2
 	
 	// do front/shadow buffers need to be switched?
 	lds tmp1, bam64flags+BAM64FLAG_COPY
 	and tmp1, tmp1
 	breq bam64_cexit
-
+	
 	// switch front/shadow
 	// we directly store tmp1 (which is bam64flags[BAM64FLAG_COPY] == 1) to
 	// the copied flag
@@ -266,6 +271,9 @@ bam64_endimg:
 	//clear the copy flag
 	clr tmp1
 	sts bam64flags+BAM64FLAG_COPY, tmp1
+
+	// update COPYFCNT with FRMCNT
+	sts bam64flags+BAM64FLAG_COPYFCNT, tmp2
 
 	// switch the pointers
 	lds tmp1, bam64_front
