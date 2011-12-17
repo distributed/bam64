@@ -11,6 +11,14 @@ bam64flags:
 // time out to next BAM cycle. every ISR decrements "to" by one.
 // if it's > 0, the ISR returns. if it's 0, the ISR executes a
 // a BAM cycle
+// the time out mechanism could be left out if the underlying timer
+// can be reconfigured on the fly. this is certainly possible, but it
+// is nasty when done with 8 bit timers. depending on the initial
+// compare value and the number of fast cycles, the compare value
+// might overflow 8 bits and thus bam64step would also need to change
+// the prescaler setting of the underlying timer. i decided to go
+// with the clearer implementation and only implement timer configuration
+// if necessary.
 .global bam64_to
 bam64_to:
 .space 1
