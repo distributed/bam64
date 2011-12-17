@@ -35,6 +35,8 @@ bam64bend:
 	push d0
 	push d1
 	push d2
+	push XL
+	push XH
 
 	ldi XL, lo8(bambuf)
 	ldi XH, hi8(bambuf)
@@ -77,7 +79,8 @@ bit:	lsr d0
 	dec colcnt
 	brne column
 
-	
+	pop XH
+	pop XL
 	pop d2
 	pop d1
 	pop d0
