@@ -60,31 +60,31 @@ wait time by a factor of two.
 
 Since LSB duration is typically on the order of a couple of processor
 cycles, it is not feasible to perform every bit cycle in one
-ISR. Therefore a configurable number of BAM64NUMFASTCYCLES (in
+ISR. Therefore a configurable number of ```BAM64NUMFASTCYCLES``` (in
 bam64config.h) bit cycles are performed in one ISR. The following
-8-BAM64NUMFASTCYCLES bit cycles are all executed in their own ISR. A
-count down / time out variable is used to time the increasingly long
-bit cycles.
+```8-BAM64NUMFASTCYCLES``` bit cycles are all executed in their own
+ISR. A count down / time out variable is used to time the increasingly
+long bit cycles.
 
 I will eventually prepare a diagram showing the operating principle.
 
-The first BAM64NUMFASTCYCLES being collapsed into one ISR mean that
-the timing of the display is not only given by the underlying timer,
-but also by the execution speed of the code. To achieve a stable and
-correct display, cycle-true timing needs to be employed during these
-first cycles. This is why I chose to write the display routines in
-assembler.
+The first ```BAM64NUMFASTCYCLES``` being collapsed into one ISR mean
+that the timing of the display is not only given by the underlying
+timer, but also by the execution speed of the code. To achieve a
+stable and correct display, cycle-true timing needs to be employed
+during these first cycles. This is why I chose to write the display
+routines in assembler.
 
 
 ### Hardware
 
 Currently, the matrix connections are hardcoded. An 8x8 matrix is
-connected to the microcontroller. Lines 0-7 are on PB0-PB7. Columns
-0-3 are ond PC0-PC3 and Columns 4-7 are ond PD4-PD7.  The LEDs are
-forward biased from line to column. Current limiting resistors are
-provided on the wires feeding the lines.
-I'm currently using an ATMega168 microcontroller clocked at 8 MHz
-from the internal RC oscillator.
+connected to the microcontroller. Lines 0-7 are on
+```PB0```-```PB7```. Columns 0-3 are ond ```PC0```-```PC3``` and
+Columns 4-7 are ond ```PD4```-```PD7```.  The LEDs are forward biased
+from line to column. Current limiting resistors are provided on the
+wires feeding the lines.  I'm currently using an ATMega168
+microcontroller clocked at 8 MHz from the internal RC oscillator.
 
 
 ### More!
