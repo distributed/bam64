@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include "bam64defs.h"
+#include "bam64config.h"
 
 .section .bss
 .global bam64flags
@@ -104,9 +105,8 @@ bam64_fast:
         out DDRD-0x20, settmp1
 
 
-3:    	
-#define BAM64NUMFAST 4
 
+3:    	
 // waste is designed to burn n processor cycles
 // note that 4 <= n <= 768
 .macro waste n=25
@@ -119,18 +119,11 @@ bam64_fast:
 .endm
 	
 	
-#define A 20
-	
-// one LSB takes "a" cycles
-
-
 #if BAM64NUMFAST >= 1
 	ld tmp1, Z+
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 2
-	// the sleeps are here to quickly navigate an objdump
-	//sleep
-	waste (A-3)
+	waste (BAM64LSBCYCLES-3)
 #endif
 #endif
 
@@ -138,9 +131,7 @@ bam64_fast:
 	ld tmp1, Z+
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 3 
-	// waste (2a-3)
-	//sleep
-	waste((2*A)-3)
+	waste((2*BAM64LSBCYCLES)-3)
 #endif
 #endif
 
@@ -148,9 +139,7 @@ bam64_fast:
 	ld tmp1, Z+
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 4 
-	// waste (4a-3)
-	//sleep
-	waste((4*A)-3)
+	waste((4*BAM64LSBCYCLES)-3)
 #endif
 #endif
 
@@ -158,9 +147,15 @@ bam64_fast:
 	ld tmp1, Z+
 	out PORTB-0x20, tmp1
 #if BAM64NUMFAST >= 5 
-	// waste (8a-3)
-	//sleep
-	waste((8*A)-3)	
+	waste((8*BAM64LSBCYCLES)-3)	
+#endif
+#endif
+
+#if BAM64NUMFAST >= 5
+	ld tmp1, Z+
+	out PORTB-0x20, tmp1
+#if BAM64NUMFAST >= 6 
+	waste((16*BAM64LSBCYCLES)-3)	
 #endif
 #endif
 
