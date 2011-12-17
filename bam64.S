@@ -3,38 +3,51 @@
 #include "bam64config.h"
 
 .section .bss
+// allocate space for all flags
 .global bam64flags
 bam64flags:	
 .skip BAM64NUMFLAGS
 
+// time out to next BAM cycle. every ISR decrements "to" by one.
+// if it's > 0, the ISR returns. if it's 0, the ISR executes a
+// a BAM cycle
 .global bam64_to
 bam64_to:
 .space 1
-	
+
+// the next bit number to be displayed
+// range: BAM64NUMFAST to 7
 .global bam64_bitnum
 bam64_bitnum:
 .space 1
-	
+
+// the number of the next column to be displayed
 .global bam64_colnum
 bam64_colnum:
 .space 1
-	
+
+// the column bit pattern. it's (1<<bam64_colnum)
+// but cached in memory for speed reasons
 .global bam64_colpattern
 bam64_colpattern:
 .space 1
-	
+
+// pointer to the front frame buffer, i.e. the buffer
+// which is going to be displayed in the next frame
 .global bam64_front
 bam64_front:
 .space 2
-	
+
+// pointer to the shadow frame buffer, i.e. the buffer
+// which is fine to be modified from application code.
 .global bam64_shadow
 bam64_shadow:
 .space 2
 
 
-
+// register definitions. some of them overlap. the code
+// schedules operations such that semantics are correct.
 #define to r16
-//#define settmp1 r16
 #define colpattern r16	// column pattern is generated before a column is drawn
 #define tmp1 r16
 #define colnum r17
@@ -51,7 +64,7 @@ bam64step:
 	in to, SREG-0x20
 	push to
 	lds to, bam64_to
-	dec to
+	dec to		   // is it time to execute a BAM cycle already?
 	sts bam64_to, to
 	breq 1f
 	rjmp bam64_minexit
@@ -92,7 +105,8 @@ bam64_fast:
         andi settmp1, ~((1<<PD4)|(1<<PD5)|(1<<PD6)|(1<<PD7))
         out DDRD-0x20, settmp1
 
-	// TODO: turn right column on, bitnum is unused now
+	// turn one column on, decide if it's low (on PORTC) or
+	// hight (on PORTD)
 	lds colpattern, bam64_colpattern
         cpi colpattern, 0x10  // check if bit in high/low nibble is set
         brsh 2f
@@ -161,7 +175,6 @@ bam64_fast:
 
 	ldi bitnum, BAM64NUMFAST
 	sts bam64_bitnum, bitnum
-	// TODO: load to
 	ldi to, 1
 	sts bam64_to, to
 	
@@ -176,20 +189,18 @@ bam64_regular:
 	inc bitnum			// blindly increment bitnum
 	sts bam64_bitnum, bitnum	// check for end of column later
 
-	// so far, so good
-	// TODO: clean this up, it does not make a lot of sense
-	// idea: bitnum++. on bitnum < 8, set to according to bitnum
-	// and BAM64NUMFAST. if bitnum == 8, we have to move to the next
+	// idea: bitnum++. on bitnum < 8, set the time out
+	// "to" according to bitnum and BAM64NUMFAST.
+	// if bitnum == 8, we have to move to the next
 	// column, thus bitnum = 0, colnum++ and colpattern <<= 1.
 	// if colnum < 8,
 	// we switched to a normal column, all is fine. if colnum == 8,
 	// we are at the end of an image, thus we have to set colnum = 0,
 	// colpattern = 0, 
 
-	// TODO: check this compensation thingie
 	// starting from bitnum, subtract the number of fast cycles (and
 	// compensate for the fact that bitnum has already been
-	// incremented), then generate generate teh time out to
+	// incremented), then generate generate the time out "to"
 	// from it.
 	push bitnum	
 	subi bitnum, BAM64NUMFAST
@@ -207,6 +218,8 @@ bam64_regular:
 
 	ldi bitnum, 0
 	sts bam64_bitnum, bitnum
+	//ldi to, 1
+	//sts bam64_to, to
 	
 	// move to next column
 	lds colpattern, bam64_colpattern
@@ -215,16 +228,13 @@ bam64_regular:
 	lds colnum, bam64_colnum	// TODO: necessary?
 	inc colnum
 	sts bam64_colnum, colnum
+	
 	// if colnum == 8, we reached the end of the matrix, do clean ups at
 	// bam64_endimg
 	cpi colnum, 8
 	brne 2f
 	rjmp bam64_endimg
 2:	
-	rjmp bam64_cexit // relax?
-
-
-
 bam64_cexit:
 	//sts bam64_colnum, colnum
 	pop bitnum
@@ -247,7 +257,7 @@ bam64_endimg:
 
 	ldi colpattern, 1
 	sts bam64_colpattern, colpattern
-	//sts bam64_to, bitnum 			// to is set up and correct
+	//sts bam64_to, bitnum 			// to is already set up and correct
 
 	cbi PORTC-0x20, PC5 // end of frame trigger line low
 
@@ -264,6 +274,8 @@ bam64_endimg:
 	// switch front/shadow
 	// we directly store tmp1 (which is bam64flags[BAM64FLAG_COPY] == 1) to
 	// the copied flag
+	// (actually it's not == 1, but != 0. the main routine should just
+	// write a 1)
 	sts bam64flags+BAM64FLAG_COPIED, tmp1
 	//clear the copy flag
 	clr tmp1
@@ -281,6 +293,13 @@ bam64_endimg:
 	lds tmp2, bam64_shadow+1
 	sts bam64_shadow+1, tmp1
 	sts bam64_front+1, tmp2
+
+	// this implementation using sts/lds requires more code than a variant
+	// which would, say, use the Z pointer to index into the flags.
+	// it does, however, execute faster since the Z register does not
+	// have to be loaded. i realize that the speed gain is marginal and
+	// the size increase is perceptible, but if we we have code like
+	// bam64bend, why not? ;)
 	
 	rjmp bam64_cexit
 
