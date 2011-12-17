@@ -6,8 +6,10 @@
 // for output. while scanning some column and in this column bit number n,
 // the BAM matrix routine needs to have all the bits n of all the pixels
 // in the column readily available. bam64 reads 8 columns of 8 pixels
-// each. for every column, all the 0th bits go into the first output
-// value, all the 1st bits go into the second output value and so on.
+// each.
+// bam64bend transposes the bits of the 8 bytes representing one column
+// of the display. for every column, all the 0th bits go into the first output
+// byte, all the 1st bits go into the second output byte and so on.
 
 
 // register usage is as follows:
