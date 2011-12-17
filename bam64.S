@@ -107,11 +107,13 @@ bam64_fast:
 3:    	
 #define BAM64NUMFAST 4
 
+// waste is designed to burn n processor cycles
+// note that 4 <= n <= 768
 .macro waste n=25
 	ldi tmp1, (\n-1)/3
 5:	dec tmp1
 	brne 5b
-.rept ((\n-1)%3)
+.rept (((\n-1)%3)+1)
 	nop
 .endr
 .endm
