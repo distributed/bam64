@@ -66,7 +66,7 @@ bam64config.h) bit cycles are performed in one ISR. The following
 ISR. A count down / time out variable is used to time the increasingly
 long bit cycles.
 
-I will eventually prepare a diagram showing the operating principle.
+A graphical overview of this method can be found in bam64timing.svg.
 
 The first ```BAM64NUMFASTCYCLES``` being collapsed into one ISR mean
 that the timing of the display is not only given by the underlying
