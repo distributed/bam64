@@ -75,6 +75,15 @@ stable and correct display, cycle-true timing needs to be employed
 during these first cycles. This is why I chose to write the display
 routines in assembler.
 
+Please note that there's a little timing quirk. The provided routines
+accept 8-bit bam values in the range 0 through 255. The display
+refresh ISR is designed to be called 2^n times for every column. This
+means that in fact there 256 LSB times between two columns, but LEDs
+can only be on for 255 LSB times maximum. However, I think you won't
+notice the difference. The difference of 1 LSB time is _not_ accounted
+for in the code, but for small BAM64LSBCYCLES, i.e. 5-15, the
+additional run time caused by the row pattern update code will
+compensate for this.
 
 ### Hardware
 
