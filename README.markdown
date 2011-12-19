@@ -24,25 +24,26 @@ setup I use an ATMega168 running at 8 MHz from the internal RC
 oscillator. A quick check with my trusty analog scope shows that
 performing BAM on the 8x8 matrix at 650 frames per second the display
 refresh uses about 1/3 of processor time.  This still leaves about 5
-MIPS to your application code.
+MIPS to your application code. Due to multiple bits being collapsed
+into one ISR, maximum ISR run time can be pretty long. Numbers will
+follow.
 
 ### Frame Preparation
 
 Frames displayed by BAM64 have 64 pixels with brightness values
 between 0 and 31. These frames are stored as arrays of 64
-bytes. Pixels are arranged in column major order, i.e. a pixels linear
-index is i = x*8 + y where x is the row number and y is the column
-number.
-Before being displayed a frame has to undergo a number of processing
-steps.  First, the linear brightness values have to be gamma
-corrected. 5 bit linear brightness values translate to 8 bit duty
-cycle information. Then, the bits of the 8 bytes of every column in
-the frame have to be transposed using the ```bam64bend```
-routine. This step enables fast access to duty cycle information by
-the BAM64 display routines. Finally, the application has to inform the
-display routines that it wants a frame buffer switch to be
-performed. The application is notified when the buffer switch takes
-place through flags.
+bytes. Pixels are arranged in column major order, i.e. a pixel's
+linear index is i = x*8 + y where x is the column number and y is the
+row number.  Before being displayed a frame has to undergo a number of
+processing steps.  First, the linear brightness values have to be
+gamma corrected. 5 bit perceived brightness values translate to 8 bit
+duty cycle information. Then, the bits of the 8 bytes of duty cycle
+information of every column in the frame have to be transposed using
+the ```bam64bend``` routine. This step enables fast access to duty
+cycle information by the BAM64 display routines. Finally, the
+application has to inform the display routines that it wants a frame
+buffer switch to be performed. The application is notified when the
+buffer switch takes place through flags.
 
 
 ### Display Principle
